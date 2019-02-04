@@ -1,0 +1,60 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+- test
+- build
+
+variables:
+  # The following variables are setup via gitlab project group:
+  # DOCKER_HUB_TOKEN
+  # DOCKER_SLUG
+  # DOCKER_USERNAME
+  # DOCKER_PASSWORD
+  # CUSTOM_REGISTRY_URL
+  # CUSTOM_REGISTRY_USER
+  # CUSTOM_REGISTRY_PW
+  DOCKER_DRIVER: overlay2
+  DOCKER_SLUG: 8ear
+
+#
+# Install dependencies
+#
+before_script:
+- .ci/01_before_install.sh
+
+#
+# Build image for a short test to see if image can be build
+#
+.test:
+  stage: test
+  except: 
+  - master  
+  script:
+  - make build v=$VERSION # build an 8ear/CONTAINERNAME image, if you want to change the slug please set DOCKER_SLUG=<Your slug>
+
+#
+# Build, tag, and push our image + trigger hub.docker.com automatic_build queue to update Readme
+#
+.build:
+  stage: build
+  only: 
+  - master  
+  script:
+  - make build v=$VERSION   # build an 8ear/CONTAINERNAME image
+  - make tags REPO=$CUSTOM_REGISTRY_URL # tagged 8ear/CONTAINERNAME + custom-URL/CONTAINERNAME
+  #- make push REPO=$CUSTOM_REGISTRY_URL USER=$CUSTOM_REGISTRY_USER PW=$CUSTOM_REGISTRY_PW
+  - make push REPO=$DOCKER_SLUG USER=$DOCKER_USERNAME PW=$DOCKER_PASSWORD
+  #- make notify-hub-docker-com TOKEN=$DOCKER_HUB_TOKEN
+
+
+#
+# For a cleaner Gitlab CI file include all subfolder which should be build:
+#
+include:
+  #- '0.1-alpine/.gitlab-ci.yml'
+  - '1.0-debian/.gitlab-ci.yml'
+  - '2.0-alpine/.gitlab-ci.yml'
+  - '2.1-alpine/.gitlab-ci.yml'

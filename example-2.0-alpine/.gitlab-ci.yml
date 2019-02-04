@@ -1,0 +1,9 @@
+build <version>-<base>:
+  extends: .build
+  variables:
+    VERSION: "<version>-<base>"
+
+test <version>-<base>:
+  extends: .test
+  variables:
+    VERSION: "<version>-<base>"
