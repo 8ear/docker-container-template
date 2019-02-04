@@ -1,4 +1,4 @@
-
+Docker Container Template
 ===
 
 This repository contains an example template for Docker container. It contains :
