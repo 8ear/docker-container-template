@@ -1,12 +1,6 @@
 Docker Container Template
 ===
 
-``` bash
-# Use me:
-git remote add template https://github.com/8ear/docker-container-template.git
-git pull template master
-```
-
 This repository contains an example template for Docker container. It contains :
 * Docker CI scripts to use in Travis or Gitlab CI to build, tag, and push Docker container to an Docker registry.
 * Makefile to an easier CI script usage

@@ -33,7 +33,7 @@ before_script:
   except: 
   - master  
   script:
-  - make build v=$VERSION # build an 8ear/CONTAINERNAME image, if you want to change the slug please set DOCKER_SLUG=<Your slug>
+  - make -C .ci build v=$VERSION # build an 8ear/CONTAINERNAME image, if you want to change the slug please set DOCKER_SLUG=<Your slug>
 
 #
 # Build, tag, and push our image + trigger hub.docker.com automatic_build queue to update Readme
@@ -43,12 +43,12 @@ before_script:
   only: 
   - master  
   script:
-  - make build v=$VERSION   # build an 8ear/CONTAINERNAME image
-  - make tags REPO=$CUSTOM_REGISTRY_URL # tagged 8ear/CONTAINERNAME + custom-URL/CONTAINERNAME
-  #- make push REPO=$CUSTOM_REGISTRY_URL USER=$CUSTOM_REGISTRY_USER PW=$CUSTOM_REGISTRY_PW
-  - make push REPO=$DOCKER_SLUG USER=$DOCKER_USERNAME PW=$DOCKER_PASSWORD
-  #- make notify-hub-docker-com TOKEN=$DOCKER_HUB_TOKEN
-
+  - make -C .ci build v=${VERSION} prod=false      # Set prod=true, if you want to build NO '-dev' tag  # build an not2push/CONTAINERNAME image
+  - make -C .ci tags REPO=$DOCKER_SLUG prod=false  # Set prod=true, if you want tags NO '-dev' tag # tagged custom-URL/CONTAINERNAME
+  #- make -C .ci tags REPO=$CUSTOM_REGISTRY_URL
+  #- make -C .ci push REPO=$CUSTOM_REGISTRY_URL USER=$CUSTOM_REGISTRY_USER PW=$CUSTOM_REGISTRY_PW
+  - make -C .ci push REPO=$DOCKER_SLUG USER=$DOCKER_USERNAME PW=$DOCKER_PASSWORD
+  #- make -C .ci notify-hub-docker-com REPO=$DOCKER_SLUG TOKEN=$DOCKER_HUB_TOKEN
 
 #
 # For a cleaner Gitlab CI file include all subfolder which should be build:

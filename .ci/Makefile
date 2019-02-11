@@ -14,13 +14,13 @@ help:
 	"
 
 build:
-	@bash .ci/02_build.sh $(v) $(prod)
+	@bash 02_build.sh $(v) $(prod)
 
 tags:
-	@bash .ci/03_tagging.sh $(REPO) $(prod)
+	@bash 03_tagging.sh $(REPO) $(prod)
 
 push:
-	@bash .ci/04_push.sh $(REPO) $(USER) $(PW)
+	@bash 04_push.sh $(REPO) $(USER) $(PW)
 
 notify-hub-docker-com:
-	@bash .ci/05_notify_hub.docker.com.sh $(TOKEN)
+	@bash 05_notify_hub.docker.com.sh $(REPO) $(TOKEN)

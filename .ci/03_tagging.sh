@@ -1,12 +1,14 @@
 #!/bin/bash
 STARTMSG="[tagging]"
 
-
 [ -z "$1" ] && echo "$STARTMSG No parameter with the image version. Exit now." && exit 1
 [ "$1" == "true" ] && echo "$STARTMSG False first argument. Abort." && exit 1
 
 REGISTRY_URL="$1"
-ENVIRONMENT="$2"
+if [[ "$2" == "true" ]]; then ENVIRONMENT="prod"; fi;
+
+# change directory to the top level:
+pushd ..
 
 # Docker Repo e.g. dcso/misp-dockerized-proxy
 [ -z "$(git remote get-url origin|grep git@)" ] || GIT_REPO="$(git remote get-url origin|sed 's,.*:,,'|sed 's,....$,,')"
@@ -70,7 +72,7 @@ do
     MAJOR_VERSION="$(echo $i|cut -d . -f 1)"        # for example 1
 
     # Remove '-dev' tag
-    if [ "$ENVIRONMENT" == "true" ]; then
+    if [ "$ENVIRONMENT" == "prod" ]; then
         #
         #   If prod=true, ~ prodcutin ready image
         #
@@ -115,3 +117,4 @@ echo  "$STARTMSG ### Show images after tagging:"
 docker images | grep $DOCKER_REPO
 
 echo "$STARTMSG $0 is finished."
+

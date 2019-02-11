@@ -29,25 +29,28 @@ before_install:
 # Build and tag our image
 #
 script:
-- make build v=${VERSION} prod=false      # Set prod=true, if you want to build NO '-dev' tag
-- make tags REPO=$DOCKER_SLUG prod=false  # Set prod=true, if you want tags NO '-dev' tag
+- make -C .ci build v=${VERSION} prod=false      # Set prod=true, if you want to build NO '-dev' tag  # build an not2push/CONTAINERNAME image
+- make -C .ci tags REPO=$DOCKER_SLUG prod=false  # Set prod=true, if you want tags NO '-dev' tag # tagged custom-URL/CONTAINERNAME
+  #- make -C .ci tags REPO=$CUSTOM_REGISTRY_URL
 
 #
 # Push all Images found with the current Docker container name to the Docker registries
 #
-deploy:
-  provider: script
-  script: 
-  - bash .ci/04_push_2_registry.sh REPO=$DOCKER_SLUG USER=$DOCKER_USERNAME PW=$DOCKER_PASSWORD
-  on:
-    branch: master
+# deploy:
+#   provider: script
+#   script: 
+#     - make -C .ci push REPO=$CUSTOM_REGISTRY_URL USER=$CUSTOM_REGISTRY_USER PW=$CUSTOM_REGISTRY_PW
+#     - make -C .ci push REPO=$DOCKER_SLUG USER=$DOCKER_USERNAME PW=$DOCKER_PASSWORD
+#     - make -C .ci notify-hub-docker-com REPO=$DOCKER_SLUG TOKEN=$DOCKER_HUB_TOKEN
+#   on:
+#     branch: master
 
 #
 # Trigger hub.docker.com automatic_build queue to update Readme
 #
 after_success:
 # [OPTIONAL] Notify Docker hub about a new Readme and update the content 
-#- if [[ "$TRAVIS_BRANCH" == "master" ]]; then make notify-hub-docker-com TOKEN=$DOCKER_HUB_TOKEN;  fi; 
+#- if [[ "$TRAVIS_BRANCH" == "master" ]]; then make -C .ci notify-hub-docker-com TOKEN=$DOCKER_HUB_TOKEN;  fi; 
 
 notifications:
   # don't notify me when things fail
